@@ -132,7 +132,7 @@
   .kw-sign .firm{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:10px}
   .kw-sign img.sig{height:80px;max-width:200px;object-fit:contain;margin-bottom:2px;display:block;margin-left:auto;margin-right:auto}
   .kw-sign .name{font-size:14px;font-weight:800;color:var(--navy);text-decoration:underline;margin-top:6px}
-  .kw-stamp{position:absolute;left:50%;top:56px;transform:translateX(-110%);z-index:3;pointer-events:none}
+  .kw-stamp{position:absolute;left:50%;top:56px;transform:translateX(-100%);z-index:3;pointer-events:none}
   .kw-stamp img.stamp{width:128px;height:128px;object-fit:contain;mix-blend-mode:multiply;opacity:.9}
 
   .kw-baseline{background:var(--navy);color:#fff;text-align:center;padding:9px;font-size:10.5px;letter-spacing:.4px}
@@ -201,7 +201,7 @@
       <div class="title">🖨️ Kwitansi Pembayaran</div>
       <div class="seg">
         <button id="segPreview" class="active" onclick="setMode('preview')">Pratinjau</button>
-        <button id="segForm" onclick="setMode('form')">Entri Data</button>
+        <button id="segForm" onclick="entriData()">Entri Data</button>
       </div>
     </div>
 
@@ -449,8 +449,12 @@ function setMode(m){
   document.getElementById("segForm").classList.toggle("active", m==="form");
   renderKwitansi();
   const fc = document.getElementById("formCard");
-  if(m==="form" && !editingId){ showForm(); }
-  else if(m==="preview"){ fc.classList.add("hidden"); }
+  if(m==="form"){ fc.classList.remove("hidden"); }
+  else { fc.classList.add("hidden"); }
+}
+function entriData(){
+  if(editingId){ setMode("form"); }
+  else { showForm(); }
 }
 
 let editingId = null;
