@@ -127,14 +127,13 @@
   .pill-belum{background:#fdeeee;color:#c0392b}
 
   .kw-footer{display:flex;align-items:flex-end;justify-content:flex-end;padding:18px 34px 22px;position:relative}
-  .kw-stamp{text-align:center;flex-shrink:0;margin-right:-30px;position:relative;z-index:2}
-  .kw-stamp img.stamp{width:120px;height:120px;object-fit:contain;mix-blend-mode:multiply}
-  .kw-sign{text-align:center;flex-shrink:0;min-width:220px;position:relative;z-index:1}
+  .kw-sign{text-align:center;flex-shrink:0;min-width:220px;position:relative;padding-top:46px}
   .kw-sign .lok{font-size:12px;color:var(--muted);margin-bottom:2px}
   .kw-sign .firm{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:10px}
-  .kw-sign img.sig{height:80px;max-width:200px;object-fit:contain;margin-bottom:2px}
-  .kw-sign .line{width:200px;height:1px;background:var(--ink);margin:6px auto 4px}
-  .kw-sign .name{font-size:14px;font-weight:800;color:var(--navy);text-decoration:underline}
+  .kw-sign img.sig{height:80px;max-width:200px;object-fit:contain;margin-bottom:2px;display:block;margin-left:auto;margin-right:auto}
+  .kw-sign .name{font-size:14px;font-weight:800;color:var(--navy);text-decoration:underline;margin-top:6px}
+  .kw-stamp{position:absolute;left:50%;top:56px;transform:translateX(-50%);z-index:3;pointer-events:none}
+  .kw-stamp img.stamp{width:128px;height:128px;object-fit:contain;mix-blend-mode:multiply;opacity:.9}
 
   .kw-baseline{background:var(--navy);color:#fff;text-align:center;padding:9px;font-size:10.5px;letter-spacing:.4px}
 
@@ -416,16 +415,14 @@ function renderKwitansi(){
       ${r.catatan?`<div class="kw-row"><div class="lbl">Catatan</div><div class="val">${esc(r.catatan)}</div></div>`:""}
     </div>
     <div class="kw-footer">
-      <div class="kw-stamp">
-        <img class="stamp" src="${ASSETS.STAMP}" alt="stempel">
-        <div class="lok" style="font-size:11px;color:var(--muted);margin-top:2px"><b>Stempel</b></div>
-      </div>
       <div class="kw-sign">
         <div class="lok">Jember, ${esc(fmtTanggal(r.tanggal))}</div>
         <div class="firm">${esc(SETTINGS.usaha)}</div>
         <img class="sig" src="${sigSrc()}">
-        <div class="line"></div>
         <div class="name">${esc(SETTINGS.penerima)}</div>
+        <div class="kw-stamp">
+          <img class="stamp" src="${ASSETS.STAMP}" alt="stempel">
+        </div>
       </div>
     </div>
     <div class="kw-baseline">${esc(SETTINGS.usaha)} &nbsp;|&nbsp; ${esc(SETTINGS.tagline)} &nbsp;|&nbsp; ${esc(SETTINGS.hp)} &nbsp;|&nbsp; ${esc(SETTINGS.email)}</div>
