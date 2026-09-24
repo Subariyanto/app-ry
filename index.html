@@ -58,6 +58,8 @@
   .btn-navy:hover{background:var(--navy2)}
   .btn-ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
   .btn-ghost:hover{border-color:var(--navy)}
+  .btn-wa{background:#25d366;color:#fff}
+  .btn-wa:hover{background:#1eb855}
   .btn-sm{padding:7px 11px;font-size:12px;border-radius:8px}
   .btn-danger{background:#fdecec;color:#c0392b}
   .btn-danger:hover{background:#f9d7d7}
@@ -263,6 +265,7 @@
       </div>
       <div class="actions">
         <button class="btn btn-primary" onclick="printKwitansi()">🖨️ Cetak / PDF</button>
+        <button class="btn btn-wa" onclick="kirimWA()">💬 Kirim via WA</button>
         <button class="btn btn-navy" onclick="editCurrent()">✏️ Edit</button>
         <button class="btn btn-ghost" onclick="duplicateCurrent()">⧉ Duplikat</button>
         <button class="btn btn-danger" onclick="deleteCurrent()">🗑 Hapus</button>
@@ -276,6 +279,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
 }
 </script>
+<script src="jspdf.umd.min.js"></script>
 <script>
 /* ==================== DATA ==================== */
 const STORE_KEY = "kwitansi_edusmart_v1";
@@ -535,6 +539,110 @@ function duplicateCurrent(){
   renderAll();
 }
 function printKwitansi(){ window.print(); }
+
+/* ==================== KIRIM VIA WA (PDF) ==================== */
+function imgFmt(dataUrl){ return /^data:image\/jpe?g/i.test(dataUrl) ? "JPEG" : "PNG"; }
+function pdfFileName(r){
+  const safe = s => String(s||"").replace(/[\\/:*?"<>|]+/g,"-").replace(/\s+/g,"_").slice(0,40);
+  return "Kwitansi_"+safe(r.nomor)+"_"+safe(r.dari)+".pdf";
+}
+function waText(r){
+  return "KWITANSI "+r.nomor+" - "+SETTINGS.usaha+"\n"+
+         "Diterima dari: "+r.dari+"\n"+
+         "Jumlah: "+fmtRp(r.nominal)+" ("+terbilang(r.nominal)+")\n"+
+         "Untuk: "+r.untuk+"\n"+
+         "Status: "+r.status+"\n"+
+         "Jember, "+fmtTanggal(r.tanggal)+"\n\n"+
+         "PDF kwitansi terlampir. Terima kasih.";
+}
+function buildKwitansiPdfBlob(){
+  const r = rows.find(x=>x.id===selectedId);
+  if(!r) throw new Error("Pilih transaksi dulu.");
+  if(!window.jspdf || !window.jspdf.jsPDF) throw new Error("Modul PDF belum termuat. Muat ulang halaman dengan internet aktif sekali lagi.");
+  const doc = new window.jspdf.jsPDF({unit:"mm", format:"a4"});
+  const C = {NAVY:[11,42,91], MUT:[95,105,125], INK:[25,30,40], GREEN:[15,138,72], RED:[192,57,43]};
+  const T = c => doc.setTextColor(c[0],c[1],c[2]);
+  const M=15, RGT=195, VX=62;
+  /* kop + judul */
+  const kopW=110, kopH=kopW/3.911;
+  doc.addImage(ASSETS.BANNER_KOP, imgFmt(ASSETS.BANNER_KOP), M, 10, kopW, kopH);
+  T(C.NAVY); doc.setFont("helvetica","bold"); doc.setFontSize(22);
+  doc.text("KWITANSI", RGT, 21, {align:"right"});
+  doc.setFont("helvetica","normal"); doc.setFontSize(9.5); T(C.MUT);
+  doc.text("Bukti Pembayaran", RGT, 27, {align:"right"});
+  doc.setFont("helvetica","bold"); doc.setFontSize(11); T(C.NAVY);
+  doc.text("No. "+r.nomor, RGT, 34, {align:"right"});
+  doc.setDrawColor(11,42,91); doc.setLineWidth(0.4); doc.line(M, 44, RGT, 44);
+  /* body */
+  let y=56;
+  const label = t => { doc.setFont("helvetica","bold"); doc.setFontSize(10); T(C.INK); doc.text(t, M, y); };
+  const val = (v, style, color) => {
+    doc.setFont("helvetica", style||"normal"); doc.setFontSize(10); T(color||C.INK);
+    const L = doc.splitTextToSize(String(v??"")||"-", 130);
+    doc.text(L, VX, y);
+    return 5.2*(L.length-1);
+  };
+  label("Sudah diterima dari"); y += val(r.dari) + 10;
+  label("Uang sejumlah");
+  doc.setFont("helvetica","bold"); doc.setFontSize(12); T(C.INK);
+  doc.text(fmtRp(r.nominal), VX, y); doc.setFontSize(10); y += 10;
+  label("Terbilang"); y += val(terbilang(r.nominal), "italic", C.MUT) + 10;
+  label("Untuk pembayaran"); y += val(r.untuk) + 10;
+  label("Metode pembayaran"); y += val(r.metode) + 10;
+  label("Status");
+  doc.setFont("helvetica","bold"); doc.setFontSize(10);
+  if(r.status==="LUNAS"){ T(C.GREEN); doc.text("LUNAS", VX, y); }
+  else{ T(C.RED); doc.text("BELUM LUNAS", VX, y); }
+  y += 10;
+  if(r.catatan){ label("Catatan"); y += val(r.catatan) + 10; }
+  /* tanda tangan + stempel */
+  const cx=157, ttdW=28, ttdH=ttdW/0.7264;
+  const sy=Math.max(y+12, 158), ttdX=cx-ttdW/2, ttdY=sy+8;
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); T(C.MUT);
+  doc.text("Jember, "+fmtTanggal(r.tanggal), cx, sy, {align:"center"});
+  doc.setFont("helvetica","italic"); doc.setFontSize(9);
+  doc.text(SETTINGS.usaha, cx, sy+5, {align:"center"});
+  doc.addImage(sigSrc(), imgFmt(sigSrc()), ttdX, ttdY, ttdW, ttdH);
+  /* stempel: menimpa 1/4 kiri tanda tangan (seperti di layar) */
+  doc.addImage(ASSETS.STAMP, "PNG", ttdX-22, ttdY+4, 36, 24);
+  doc.setFont("helvetica","bold"); doc.setFontSize(11); T(C.NAVY);
+  doc.text(SETTINGS.penerima, cx, ttdY+ttdH+11, {align:"center"});
+  doc.setDrawColor(11,42,91); doc.setLineWidth(0.3);
+  doc.line(cx-28, ttdY+ttdH+12.2, cx+28, ttdY+ttdH+12.2);
+  /* baseline */
+  doc.setFillColor(11,42,91); doc.rect(M, 285, 180, 8, "F");
+  doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(255,255,255);
+  doc.text(SETTINGS.usaha+" | "+SETTINGS.tagline+" | "+SETTINGS.hp+" | "+SETTINGS.email, 105, 289.7, {align:"center"});
+  return doc.output("blob");
+}
+async function kirimWA(){
+  const r = rows.find(x=>x.id===selectedId);
+  if(!r){ alert("Pilih transaksi dulu."); return; }
+  let blob;
+  try{ blob = buildKwitansiPdfBlob(); }
+  catch(err){ alert("Gagal membuat PDF: "+(err.message||err)); return; }
+  const fname = pdfFileName(r);
+  /* 1) Android / HP: share langsung PDF ke WhatsApp via share sheet */
+  try{
+    const file = new File([blob], fname, {type:"application/pdf"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({ files:[file], title:"Kwitansi "+r.nomor, text:waText(r) });
+      return;
+    }
+  }catch(err){
+    if(err && err.name==="AbortError") return; /* user batal */
+  }
+  /* 2) Desktop / fallback: unduh PDF + buka WhatsApp */
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+  const telp = prompt("Nomor WA penerima (opsional - kosongkan untuk memilih kontak di WhatsApp).\nFormat tanpa awalan 0, contoh: 628123456789", "");
+  const teks = encodeURIComponent(waText(r));
+  const url = (telp && telp.trim()) ? ("https://wa.me/"+telp.replace(/\D/g,"")+"?text="+teks) : ("https://api.whatsapp.com/send?text="+teks);
+  window.open(url, "_blank");
+  alert("PDF sudah terunduh ("+fname+").\nSilakan lampirkan file tersebut di chat WhatsApp yang terbuka.");
+}
 
 /* ==================== TANDA TANGAN ==================== */
 function sigSrc(){ return customSignature || ASSETS.TTD; }

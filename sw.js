@@ -1,10 +1,11 @@
-const CACHE = "kwitansi-edusmart-v3";
+const CACHE = "kwitansi-edusmart-v4";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png",
+  "./jspdf.umd.min.js"
 ];
 
 self.addEventListener("install", (e) => {
