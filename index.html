@@ -622,26 +622,32 @@ async function kirimWA(){
   try{ blob = buildKwitansiPdfBlob(); }
   catch(err){ alert("Gagal membuat PDF: "+(err.message||err)); return; }
   const fname = pdfFileName(r);
-  /* 1) Android / HP: share langsung PDF ke WhatsApp via share sheet */
-  try{
-    const file = new File([blob], fname, {type:"application/pdf"});
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({ files:[file], title:"Kwitansi "+r.nomor, text:waText(r) });
-      return;
+  /* 1) HP (Android / iPhone): share sheet OS -> langsung kirim PDF ke WhatsApp */
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(isMobile && navigator.canShare && navigator.share){
+    try{
+      const file = new File([blob], fname, {type:"application/pdf"});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({ files:[file], title:"Kwitansi "+r.nomor, text:waText(r) });
+        return;
+      }
+    }catch(err){
+      if(err && err.name==="AbortError") return; /* user batal */
     }
-  }catch(err){
-    if(err && err.name==="AbortError") return; /* user batal */
   }
-  /* 2) Desktop / fallback: unduh PDF + buka WhatsApp */
+  /* 2) Desktop (Mac / Windows): unduh PDF + buka chat WhatsApp.
+     (Di desktop TIDAK pakai share sheet macOS/Windows karena WhatsApp Desktop
+      tidak terdaftar sebagai target share -> PDF tidak pernah sampai ke WA.) */
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob); a.download=fname;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
-  const telp = prompt("Nomor WA penerima (opsional - kosongkan untuk memilih kontak di WhatsApp).\nFormat tanpa awalan 0, contoh: 628123456789", "");
+  const telp = prompt("PDF kwitansi sudah terunduh: "+fname+"\n(ada di folder Unduhan / Downloads)\n\nNomor WA penerima (opsional - kosongkan untuk memilih kontak di WhatsApp).\nFormat tanpa awalan 0, contoh: 628123456789", "");
   const teks = encodeURIComponent(waText(r));
   const url = (telp && telp.trim()) ? ("https://wa.me/"+telp.replace(/\D/g,"")+"?text="+teks) : ("https://api.whatsapp.com/send?text="+teks);
-  window.open(url, "_blank");
-  alert("PDF sudah terunduh ("+fname+").\nSilakan lampirkan file tersebut di chat WhatsApp yang terbuka.");
+  const w = window.open(url, "_blank");
+  if(!w){ location.href = url; }
+  alert("WhatsApp terbuka di tab baru.\n1. Pilih kontak tujuan (teks ringkasan sudah terisi otomatis).\n2. Lampirkan PDF dari folder Unduhan: klik ikon klip / + > Dokumen > "+fname+".\n\nCatatan: WhatsApp tidak mengizinkan browser melampirkan file otomatis, jadi PDF diunduh dulu lalu dilampirkan sekali klik.");
 }
 
 /* ==================== TANDA TANGAN ==================== */
