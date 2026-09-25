@@ -103,41 +103,62 @@
   /* ===== KWITANSI PREVIEW ===== */
   .preview-wrap{background:var(--paper);border-radius:16px;padding:24px;box-shadow:0 8px 30px rgba(20,40,80,.1);border:1px solid var(--line)}
   .kwitansi{
-    background:#fff;border:2px solid var(--navy);border-radius:12px;overflow:hidden;
-    max-width:720px;margin:0 auto;
+    background:#fff;border:none;border-radius:14px;overflow:hidden;position:relative;
+    max-width:720px;margin:0 auto;box-shadow:0 3px 14px rgba(11,42,91,.14);
   }
+  .kw-accent{position:absolute;left:0;top:0;bottom:0;width:10px;z-index:6;
+    background:linear-gradient(180deg,var(--gold) 0%,#18a558 32%,#1d4ed8 66%,var(--navy) 100%)}
   .kw-header {
     position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;
-    padding:14px 20px;border-bottom:2px solid var(--navy);background:linear-gradient(180deg,#fbfcff,#f4f7fd)
+    padding:20px 24px 20px 32px;
+    background:linear-gradient(120deg,var(--navy) 0%,var(--navy2) 58%,#1e4fa3 100%);
   }
-  .kw-header img.kop{width:58%;max-width:360px;display:block;height:auto}
-  .kw-header .kw-num{position:static;text-align:right;z-index:2;flex-shrink:0}
-  .kw-num .kw-title{font-size:19px;font-weight:800;color:var(--navy);letter-spacing:2px}
-  .kw-num .kw-sub{font-size:10.5px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
-  .kw-num .kw-no{font-size:13px;font-weight:700;color:var(--green2);margin-top:8px}
+  .kw-header::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(circle at 86% 18%,rgba(255,255,255,.10) 0,transparent 46%)}
+  .kw-brand{background:#fff;border-radius:10px;padding:8px 12px;box-shadow:0 3px 10px rgba(0,0,0,.22);display:flex;align-items:center;flex-shrink:0}
+  .kw-brand img.kop{width:236px;max-width:236px;display:block;height:auto}
+  .kw-header .kw-num{text-align:right;z-index:2;flex-shrink:1;min-width:0}
+  .kw-num .kw-title{font-size:25px;font-weight:900;color:#fff;letter-spacing:3px;line-height:1}
+  .kw-num .kw-sub{font-size:10px;color:#bcd2f2;letter-spacing:2.2px;text-transform:uppercase;margin-top:4px}
+  .kw-num .kw-no{display:inline-block;margin-top:9px;background:linear-gradient(120deg,#b8860b,#d4a017);color:#fff;
+    font-size:12px;font-weight:800;padding:4px 15px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.28)}
 
-  .kw-body{padding:20px 24px}
-  .kw-row{display:flex;padding:9px 0;border-bottom:1px dashed #dfe4ee;gap:12px}
-  .kw-row .lbl{width:150px;flex-shrink:0;font-size:12.5px;color:var(--muted);font-weight:600}
-  .kw-row .val{flex:1;font-size:13.5px;color:var(--ink);font-weight:600;text-align:left}
-  .kw-row .val.amount{font-size:17px;color:var(--green2);font-weight:800}
-  .kw-row .val.terbilang{font-style:italic;font-weight:600;color:var(--navy)}
+  .kw-amount{
+    position:relative;color:#fff;padding:16px 24px 17px 34px;
+    background:linear-gradient(120deg,#0c3a2d 0%,#0f8a48 62%,#18a558 100%);
+  }
+  .kw-amount::after{content:"";position:absolute;left:0;right:0;top:0;height:4px;
+    background:linear-gradient(90deg,var(--gold),#f5c542,var(--gold))}
+  .ka-label{font-size:11.5px;font-weight:800;letter-spacing:2.6px;color:#fff}
+  .ka-val{font-size:31px;font-weight:900;letter-spacing:.4px;line-height:1.25;margin-top:2px;text-shadow:0 1px 2px rgba(0,0,0,.28)}
+  .ka-terbilang{font-size:13px;font-style:italic;color:#eafaf1;margin-top:3px}
+
+  .kw-body{padding:16px 26px 14px 36px}
+  .kw-row{display:flex;align-items:flex-start;padding:9px 0;border-bottom:1px dashed #dfe4ee;gap:14px}
+  .kw-row:last-child{border-bottom:none}
+  .kw-row .lbl{width:150px;flex-shrink:0;font-size:10.5px;color:var(--navy);font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+    background:#eef3fb;border-radius:7px;padding:4px 10px}
+  .kw-row .val{flex:1;font-size:13.5px;color:var(--ink);font-weight:600;text-align:left;padding-top:3px}
   .kw-row .val .status-pill{
-    display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;
+    display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.5px;
   }
-  .pill-lunas{background:#e2f7ec;color:#0f8a48}
-  .pill-belum{background:#fdeeee;color:#c0392b}
+  .pill-lunas{background:linear-gradient(120deg,#0f8a48,#18a558);color:#fff;box-shadow:0 2px 8px rgba(15,138,72,.35)}
+  .pill-belum{background:linear-gradient(120deg,#b3392b,#d35445);color:#fff;box-shadow:0 2px 8px rgba(179,57,43,.35)}
 
-  .kw-footer{display:flex;align-items:flex-end;justify-content:flex-end;padding:18px 34px 22px;position:relative}
-  .kw-sign{text-align:center;flex-shrink:0;min-width:220px;position:relative;padding-top:46px}
-  .kw-sign .lok{font-size:12px;color:var(--muted);margin-bottom:2px}
+  .kw-footer{display:flex;align-items:flex-end;justify-content:space-between;padding:16px 30px 20px 36px;position:relative;gap:24px}
+  .kw-thanks{flex:1;padding-bottom:10px}
+  .kw-thanks .big{font-size:16px;font-weight:900;color:var(--navy);letter-spacing:.3px}
+  .kw-thanks .small{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.55}
+  .kw-sign{text-align:center;flex-shrink:0;min-width:230px;position:relative;padding-top:40px}
+  .kw-sign .lok{font-size:12px;color:var(--ink);font-weight:600;margin-bottom:2px}
   .kw-sign .firm{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:10px}
   .kw-sign img.sig{height:80px;max-width:200px;object-fit:contain;margin-bottom:2px;display:block;margin-left:auto;margin-right:auto}
-  .kw-sign .name{font-size:14px;font-weight:800;color:var(--navy);text-decoration:underline;margin-top:6px}
+  .kw-sign .name{font-size:14px;font-weight:800;color:var(--navy);margin-top:6px}
   .kw-stamp{position:absolute;left:50%;top:56px;transform:translateX(-100%);z-index:3;pointer-events:none}
-  .kw-stamp img.stamp{width:128px;height:128px;object-fit:contain;mix-blend-mode:multiply;opacity:.9}
+  .kw-stamp img.stamp{width:126px;height:126px;object-fit:contain;mix-blend-mode:multiply;opacity:.92}
 
-  .kw-baseline{background:var(--navy);color:#fff;text-align:center;padding:9px;font-size:10.5px;letter-spacing:.4px}
+  .kw-baseline{background:linear-gradient(90deg,var(--navy) 0%,#1d4fa3 100%);color:#dbe6f8;text-align:center;padding:10px;font-size:10.5px;letter-spacing:.4px}
+  .kw-baseline b{color:#fff}
 
   .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;justify-content:center}
 
@@ -146,6 +167,7 @@
   .hint{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.5}
 
   @media print{
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff}
     .app{display:block;padding:0;max-width:none}
     .sidebar,.topbar,.form-card,.actions{display:none!important}
@@ -401,24 +423,32 @@ function renderKwitansi(){
   }
   const st = r.status==="LUNAS" ? '<span class="status-pill pill-lunas">● LUNAS</span>' : '<span class="status-pill pill-belum">● BELUM LUNAS</span>';
   el.innerHTML = `
+    <div class="kw-accent"></div>
     <div class="kw-header">
-      <img class="kop" src="${ASSETS.BANNER_KOP}" alt="EduSmart Digital">
+      <div class="kw-brand"><img class="kop" src="${ASSETS.BANNER_KOP}" alt="EduSmart Digital"></div>
       <div class="kw-num">
         <div class="kw-title">KWITANSI</div>
         <div class="kw-sub">Bukti Pembayaran</div>
         <div class="kw-no">No. ${esc(r.nomor)}</div>
       </div>
     </div>
+    <div class="kw-amount">
+      <div class="ka-label">UANG SEJUMLAH</div>
+      <div class="ka-val">${fmtRp(r.nominal)}</div>
+      <div class="ka-terbilang">${esc(terbilang(r.nominal))}</div>
+    </div>
     <div class="kw-body">
-      <div class="kw-row"><div class="lbl">Sudah diterima dari</div><div class="val">${esc(r.dari)}</div></div>
-      <div class="kw-row"><div class="lbl">Uang sejumlah</div><div class="val amount">${fmtRp(r.nominal)}</div></div>
-      <div class="kw-row"><div class="lbl">Terbilang</div><div class="val terbilang">${esc(terbilang(r.nominal))}</div></div>
+      <div class="kw-row"><div class="lbl">Diterima dari</div><div class="val">${esc(r.dari)}</div></div>
       <div class="kw-row"><div class="lbl">Untuk pembayaran</div><div class="val">${esc(r.untuk)}</div></div>
-      <div class="kw-row"><div class="lbl">Metode pembayaran</div><div class="val">${esc(r.metode)}</div></div>
+      <div class="kw-row"><div class="lbl">Metode</div><div class="val">${esc(r.metode)}</div></div>
       <div class="kw-row"><div class="lbl">Status</div><div class="val">${st}</div></div>
       ${r.catatan?`<div class="kw-row"><div class="lbl">Catatan</div><div class="val">${esc(r.catatan)}</div></div>`:""}
     </div>
     <div class="kw-footer">
+      <div class="kw-thanks">
+        <div class="big">Terima kasih!</div>
+        <div class="small">Kwitansi ini sah diterbitkan oleh ${esc(SETTINGS.usaha)}.<br>Tanpa stempel dan tanda tangan asli tidak sah.</div>
+      </div>
       <div class="kw-sign">
         <div class="lok">Jember, ${esc(fmtTanggal(r.tanggal))}</div>
         <div class="firm">${esc(SETTINGS.usaha)}</div>
@@ -429,7 +459,7 @@ function renderKwitansi(){
         </div>
       </div>
     </div>
-    <div class="kw-baseline">${esc(SETTINGS.usaha)} &nbsp;|&nbsp; ${esc(SETTINGS.tagline)} &nbsp;|&nbsp; ${esc(SETTINGS.hp)} &nbsp;|&nbsp; ${esc(SETTINGS.email)}</div>
+    <div class="kw-baseline"><b>${esc(SETTINGS.usaha)}</b> &nbsp;•&nbsp; ${esc(SETTINGS.tagline)} &nbsp;•&nbsp; ${esc(SETTINGS.hp)} &nbsp;•&nbsp; ${esc(SETTINGS.email)}</div>
   `;
 }
 

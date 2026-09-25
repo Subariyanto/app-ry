@@ -1,4 +1,4 @@
-const CACHE = "kwitansi-edusmart-v6";
+const CACHE = "kwitansi-edusmart-v7";
 const ASSETS = [
   "./",
   "./index.html",
